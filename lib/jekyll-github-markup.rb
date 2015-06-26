@@ -1,3 +1,7 @@
+begin
+  require 'awesome_print'
+rescue LoadError; end
+
 module Jekyll
   module Converters
     class GitHubMarkup < Converter
