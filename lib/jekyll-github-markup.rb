@@ -20,8 +20,16 @@ module Jekyll
         @config['github-markup']['markup'] ||= 'markdown'
       end
 
+      def valid_markup?(markup)
+        GitHub::Markup.markups.any? { |m| m.regexp =~ markup }
+      end
+
       def setup
         return if @setup
+        unless valid_markup?(@config['github-markup']['markup'])
+          fail LoadError.new("Invalid Markup type: #{@config['github-markup']['markup']}")
+        end
+
         @setup = true
       end
 
