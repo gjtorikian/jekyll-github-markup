@@ -21,21 +21,16 @@ module Jekyll
       end
 
       def valid_markup?(markup)
-        GitHub::Markup.markups.any? { |m| m.regexp =~ markup }
+        GitHub::Markup.markups.find { |m| m.regexp =~ markup }
       end
 
       def setup
         return if @setup
-        unless valid_markup?(@config['github-markup']['markup'])
-          fail LoadError.new("Invalid Markup type: #{@config['github-markup']['markup']}")
+        unless @impl = valid_markup?(@config['github-markup']['markup'])
+          fail LoadError, "Invalid Markup type: #{@config['github-markup']['markup']}"
         end
 
         @setup = true
-      end
-
-      def matches(ext)
-        rgx = "\.(#{@config['asciidoc_ext'].tr ',', '|'})$"
-        ext =~ Regexp.new(rgx, Regexp::IGNORECASE)
       end
 
       def output_ext(ext)
@@ -44,14 +39,7 @@ module Jekyll
 
       def convert(content)
         setup
-
-
-      end
-
-      def load(content)
-        setup
-
-
+        @impl.render(content)
       end
     end
   end

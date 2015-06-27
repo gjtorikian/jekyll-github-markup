@@ -1,21 +1,13 @@
-require "test_helper"
+require 'test_helper'
 
 class JekyllGitHubMarkupTest < Converter::JekyllGitHubMarkupTestCase
   def setup
-    @config = {
-      'github-markup' => {
-        'markup' => 'markdown'
-      },
-      'markdown' => 'GitHubMarkup'
-    }
-    @markdown = Jekyll::Converters::GitHubMarkup.new @config
+    @markdown = Jekyll::Converters::GitHubMarkup.new config
   end
 
-  def test_fail_when_passing_bad_markup
-    override = @config.dup
-    override['github-markup']['markup'] = 'not_real'
-    markdown = Jekyll::Converters::GitHubMarkup.new override
-    assert_raises(LoadError) { markdown.convert('http://www.github.com') }
+  def test_converts_markdown
+    output = @markdown.convert('<http://www.github.com>')
+    assert_equal output.strip, '<p><a href="http://www.github.com">http://www.github.com</a></p>'
   end
 
 end
